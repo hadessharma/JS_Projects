@@ -16,11 +16,15 @@ const getContacts = asyncHandler(async (req, res) => {
 //@access public
 
 const getContact = asyncHandler(async (req, res) => {
-  const contact = await Contact.findById(req.params.id);
+  // console.log("pre!@");
+  // console.log(typeof req.params.id);
+
+  const contact = await Contact.findOne({name : req.params.id});
+  console.log(contact);
   if (!contact) {
     res.status(404);
     throw new Error("Contact not found");
-  }; 
+  }
   res.status(200).json(contact);
 });
 
@@ -49,7 +53,17 @@ const createContact = asyncHandler(async (req, res) => {
 //@access public
 
 const updateContact = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: `Update contact for ${req.params.id}` });
+  const contact = await Contact.findById(req.params.id);
+  // console.log(contact);
+  if (!contact) {
+    res.status(404);
+    throw new Error("Contact not found");
+  }
+
+  contact = await Contact.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+  res.status(200).json(contact);
 });
 
 //@desc Delete contact
